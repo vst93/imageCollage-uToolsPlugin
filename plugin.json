@@ -1,0 +1,30 @@
+{
+	"pluginName": "图片拼接",
+	"description": "图片拼接",
+	"homepage": "https://github.com/vst93/doutu-uToolsPlugin",
+	"author": "vst",
+	"main": "index.html",
+	"logo": "logo.jpg",
+	"version": "0.0.1",
+	"preload":"preload.js",
+	"features": [
+	    {
+			"code": "pj",
+			"explain": "图片拼接",
+	        "cmds":[
+				"图片拼接",
+				"tupianpinjie",
+				"拼接",
+				{
+					"type": "files",
+					"label": "图片拼接",
+					"fileType": "file",
+					"match": "/\\.(?:jpg|jpeg|png|gif|svg|bmp|webp)$/i",
+					"minLength": 1,
+					"maxLength": 100
+				}
+				
+			]
+		}
+	]
+}
