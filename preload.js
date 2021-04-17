@@ -1,29 +1,24 @@
-const electron = require('electron')
-const { clipboard } = require('electron')
-const app = electron.app
-const path = require('path')
-const http = require('http');
-const https = require('https');
 const fs = require('fs');
-const os = require('os');
-const nativeImage = require('electron').nativeImage
 const sizeOf = require('image-size');
 
 
-matchImgUrl = str => {
-    var reg = /data-original="(.*?)"/gim;
-    var res = []
-    while (re = reg.exec(str)) {
-        res.push(re[1])
-    }
-    return res;
-}
-
-
-window.getImageWH = function(path) {
+window.getImageWH = function (path) {
     var dimensions = sizeOf(path);
     return {
         "h": dimensions.height,
         "w": dimensions.width
     }
+}
+
+window.saveImage = function (filePath, base64Data) {
+    base64Data = base64Data.replace(/^data:.+;base64,/, '');
+    dataBuffer = new Buffer.from(base64Data, 'base64');
+    fs.writeFile(filePath, dataBuffer, err => {
+        if (err != null) {
+            utools.showNotification('保存文件异常')
+            return
+        }else{
+            utools.shellShowItemInFolder(filePath)
+        }
+    });
 }
