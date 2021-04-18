@@ -2,60 +2,60 @@ var imageListFirstItemId = null
 var imageListLastItemId = null
 var imageList = {}
 var haveMargin = true
+var theImage = null
 
 utools.onPluginEnter(({ code, type, payload }) => {
-    // if (utools.isDarkColors()) {
-    //     $(document.body).addClass('dark-mode');
-    // } else {
-    //     $(document.body).removeClass('dark-mode');
-    // }
-    // recommendPic()
-    // utools.setExpendHeight(0);
-    // utools.setSubInput(({
-    //     text
-    // }) => {
-    //     this.text = text
-    //     this.page = 1
-    //     if (text[text.length - 1] == ' ') {
-    //         text = text.replace(/(\s*$)/g, "");
-    //         this.text = text;
-    //         utools.setSubInputValue(text)
-    //         enterText();
-    //     }
-    // }, "想搜点啥（搜索结果点击即可复制到剪切板）");
-
     if (type == "files") {
-        payload.forEach(payloadVal => {
-            // console.log(payloadVal.path)
-            if (payloadVal.isDirectory == true) {
-                return true;
-            }
-            appendImage(payloadVal.path)
-            // theId = createGuid()
-            // // theId = payloadVal.name
-            // console.log(theId)
-            // theUpItemId = imageListLastItemId
-            // imageList[theId] = {
-            //     "id": theId,
-            //     "path": payloadVal.path,
-            //     "up": theUpItemId,
-            //     "next": null
-            // }
-            // if (imageListLastItemId != null) {
-            //     imageList[imageListLastItemId]["next"] = theId
-            // }
-            // imageListLastItemId = theId
-
-            // if (imageListFirstItemId == null) {
-            //     imageListFirstItemId = theId
-            // }
-            // console.log("end")
-        })
+        (function (callback) {
+            payload.forEach(payloadVal => {
+                if (payloadVal.isDirectory == true) {
+                    return true;
+                }
+                appendImage(payloadVal.path)
+            })
+            callback();
+        })(showImageList)
     }
-    showImageList();
 });
 
 
+$(function () {
+    $(document).on('mouseenter', '.content >.images > img', function () {
+        thisTop = $(this).offset().top+$(this).height()/2-20
+        thisLeft = $(this).offset().left+190
+        
+        $('#image-tools').css('top', thisTop)
+        $('#image-tools').css('left', thisLeft)
+        theImage = this
+        showImageTools()
+    })
+
+    $(document).on('mouseleave', '.content >.images', function () {
+        hideImageTools()
+    })
+
+    $(document).on('mouseover', '#image-tools', function () {
+        showImageTools()
+    })
+    $(document).on('mouseover', '#image-tools p', function () {
+        showImageTools()
+    })
+
+})
+
+function showImageTools(){
+    $(theImage).css('opacity',0.6)
+    $(theImage).css('filter','dropshadow(color=#666666,offx=3,offy=3,positive=2)')
+    $('#image-tools').show()
+}
+
+function hideImageTools(){
+    $('.content .images img').css('opacity',1)
+    $('.content .images img').css('filter','')
+    $('#image-tools').hide()
+}
+
+//获取唯一id
 function createGuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -63,18 +63,32 @@ function createGuid() {
     });
 }
 
-
+//渲染图片列表
 function showImageList() {
     content = ""
     for (imageListKey in imageList) {
         theImageListItem = imageList[imageListKey]
         content += '<img src="' + theImageListItem.path + '" id="' + theImageListItem.id + '"></img>'
     }
-    console.log(content)
     $(".content .images").html(content)
+    exchangeMargin()
+    $('.content .images').end().scrollTop($('.content .images').height())
+}
+
+//切换边框配置
+function exchangeMargin() {
+    if (haveMargin == true) {
+        $(".content .images").css('padding', '5px');
+        $(".content .images img").css('margin-bottom', '5px');
+    } else {
+        $(".content .images").css('padding', '0');
+        $(".content .images img").css('margin-bottom', '0');
+    }
     $(".content .images img").last().css("margin-bottom", "0")
 }
 
+
+//刷新开关对应的状态
 function refreshCheckBoxStatus(idName, theVal) {
     if (window[theVal] == true) {
         $("#" + idName).attr("checked", true);
@@ -83,19 +97,24 @@ function refreshCheckBoxStatus(idName, theVal) {
     }
 }
 
+//切换开关
 function exchangeCheckBoxStatus(idName, theVal) {
     window[theVal] = !window[theVal]
     refreshCheckBoxStatus(idName, theVal)
 }
 
-function clearImageList(){
+//清空图片列表
+function clearImageList() {
     imageList = {}
+    imageListFirstItemId = null
+    imageListLastItemId = null
     showImageList()
 }
 
+//合成图片
 function makeCollage() {
-    if (Object.keys(imageList).length==0){
-        showToast('warnToast',"未添加图片")
+    if (Object.keys(imageList).length == 0) {
+        showToast('warnToast', "未添加图片")
         return
     }
     var cw = 0;
@@ -145,14 +164,14 @@ function makeCollage() {
     imgDataUrl = c.toDataURL()
     // utools.copyImage(imgDataUrl)
     imageFile = utools.getPath('downloads') + '/' + new Date().getTime() + '.png'
-    showToast("toast","保存成功")
+    showToast("toast", "保存成功")
     window.saveImage(imageFile, imgDataUrl)
 }
 
-
-function showToast(idName,theText){
+//显示提示框
+function showToast(idName, theText) {
     $("#" + idName + " .weui-toast .weui-toast__content").text(theText)
-    var $toast = $('#'+idName);
+    var $toast = $('#' + idName);
     if ($toast.css('display') != 'none') return;
     $toast.fadeIn(100);
     setTimeout(function () {
@@ -160,21 +179,23 @@ function showToast(idName,theText){
     }, 2000);
 }
 
-function addImage(){
+//选择图片文件
+function addImage() {
     v = utools.showOpenDialog({
-        filters: [{ 'name': 'Images', extensions: ['jpg','jpeg','gif','png','bmp','webp'] }],
-        properties: ['openFile','multiSelections']
+        filters: [{ 'name': 'Images', extensions: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'] }],
+        properties: ['openFile', 'multiSelections']
     })
-    if(v==undefined){
+    if (v == undefined) {
         return
     }
-    for (vk in v){
-        appendImage(v[vk]) 
+    for (vk in v) {
+        appendImage(v[vk])
     }
     showImageList()
 }
 
-function appendImage(imagePath){
+//加入图片
+function appendImage(imagePath) {
     console.log(imagePath)
     theId = createGuid()
     theUpItemId = imageListLastItemId
@@ -193,3 +214,5 @@ function appendImage(imagePath){
         imageListFirstItemId = theId
     }
 }
+
+
