@@ -1,5 +1,4 @@
-var imageListFirstItemId = null
-var imageListLastItemId = null
+
 var imageList = {}
 var haveMargin = true
 var theImage = null
@@ -13,45 +12,44 @@ utools.onPluginEnter(({ code, type, payload }) => {
                 }
                 appendImage(payloadVal.path)
             })
-            callback();
+            callback(true);
         })(showImageList)
+    }else{
+        showImageList()
     }
 });
 
 
 $(function () {
     $(document).on('mouseenter', '.content >.images > img', function () {
-        thisTop = $(this).offset().top+$(this).height()/2-20
-        thisLeft = $(this).offset().left+190
-        
+        thisTop = $(this).offset().top + $(this).height() / 2 - 20
+        thisLeft = $(this).offset().left + 190
+
         $('#image-tools').css('top', thisTop)
         $('#image-tools').css('left', thisLeft)
         theImage = this
         showImageTools()
     })
-
     $(document).on('mouseleave', '.content >.images', function () {
         hideImageTools()
     })
-
     $(document).on('mouseover', '#image-tools', function () {
         showImageTools()
     })
     $(document).on('mouseover', '#image-tools p', function () {
         showImageTools()
     })
-
 })
 
-function showImageTools(){
-    $(theImage).css('opacity',0.6)
-    $(theImage).css('filter','dropshadow(color=#666666,offx=3,offy=3,positive=2)')
+function showImageTools() {
+    $(theImage).css('opacity', 0.6)
+    $(theImage).css('filter', 'dropshadow(color=#666666,offx=3,offy=3,positive=2)')
     $('#image-tools').show()
 }
 
-function hideImageTools(){
-    $('.content .images img').css('opacity',1)
-    $('.content .images img').css('filter','')
+function hideImageTools() {
+    $('.content .images img').css('opacity', 1)
+    $('.content .images img').css('filter', '')
     $('#image-tools').hide()
 }
 
@@ -64,15 +62,34 @@ function createGuid() {
 }
 
 //渲染图片列表
-function showImageList() {
+function showImageList(scrollTop) {
     content = ""
+    console.log(imageList)
+    if (Object.keys(imageList).length == 0) {
+        $(".content .images").html('')
+        $(".content .images").css('padding', '0');
+        return
+    }
+    var imageListFirstItemId = null
     for (imageListKey in imageList) {
         theImageListItem = imageList[imageListKey]
+        if (theImageListItem.up == null) {
+            imageListFirstItemId = imageListKey
+            break
+        }
+    }
+
+    var theItemid = imageListFirstItemId
+    while (theItemid != null && imageList[theItemid] != undefined) {
+        theImageListItem = imageList[theItemid]
         content += '<img src="' + theImageListItem.path + '" id="' + theImageListItem.id + '"></img>'
+        theItemid = theImageListItem.next
     }
     $(".content .images").html(content)
     exchangeMargin()
-    $('.content .images').end().scrollTop($('.content .images').height())
+    if (scrollTop == true) {
+        $('.content .images').end().scrollTop($('.content .images').height())
+    }
 }
 
 //切换边框配置
@@ -86,7 +103,6 @@ function exchangeMargin() {
     }
     $(".content .images img").last().css("margin-bottom", "0")
 }
-
 
 //刷新开关对应的状态
 function refreshCheckBoxStatus(idName, theVal) {
@@ -106,9 +122,7 @@ function exchangeCheckBoxStatus(idName, theVal) {
 //清空图片列表
 function clearImageList() {
     imageList = {}
-    imageListFirstItemId = null
-    imageListLastItemId = null
-    showImageList()
+    showImageList(true)
 }
 
 //合成图片
@@ -117,18 +131,32 @@ function makeCollage() {
         showToast('warnToast', "未添加图片")
         return
     }
+
+    var imageListFirstItemId = null
+    for (imageListKey in imageList) {
+        theImageListItem = imageList[imageListKey]
+        if (theImageListItem.up == null) {
+            imageListFirstItemId = imageListKey
+            break
+        }
+    }
+
+    //计算所需canvas宽高
     var cw = 0;
     var ch = 0;
     var imageCommonW = 0
-    //计算所需canvas宽高
-    for (imageListKey in imageList) {
-        theImageWH = window.getImageWH(imageList[imageListKey]["path"])
+    var theItemid = imageListFirstItemId
+    while (theItemid != null && imageList[theItemid] != undefined) {
+        theImageListItem = imageList[theItemid]
+        theImageWH = window.getImageWH(imageList[theItemid]["path"])
+        console.log('HHH', theImageWH)
         if (cw == 0) {
             cw = theImageWH.w
             imageCommonW = theImageWH.w
         }
         theH = theImageWH.h * cw / theImageWH.w
         ch += theH
+        theItemid = theImageListItem.next
     }
 
     //添加间隙
@@ -149,16 +177,21 @@ function makeCollage() {
     if (haveMargin == true) {
         theX = imageCommonW / 100
     }
-    for (imageListKey in imageList) {
+
+    var theItemid = imageListFirstItemId
+    while (theItemid != null && imageList[theItemid] != undefined) {
+        theImageListItem = imageList[theItemid]
         if (haveMargin == true) {
             theY += imageCommonW / 100
         }
-        theImageWH = window.getImageWH(imageList[imageListKey]["path"])
-        var img = document.getElementById(imageListKey);
+        theImageWH = window.getImageWH(imageList[theItemid]["path"])
+        console.log('HHH22', theImageWH)
+        var img = document.getElementById(theItemid);
         theH = theImageWH.h * imageCommonW / theImageWH.w
 
         ctx.drawImage(img, theX, theY, imageCommonW, theH);
         theY += theH
+        theItemid = theImageListItem.next
     }
 
     imgDataUrl = c.toDataURL()
@@ -167,6 +200,7 @@ function makeCollage() {
     showToast("toast", "保存成功")
     window.saveImage(imageFile, imgDataUrl)
 }
+
 
 //显示提示框
 function showToast(idName, theText) {
@@ -191,13 +225,26 @@ function addImage() {
     for (vk in v) {
         appendImage(v[vk])
     }
-    showImageList()
+    showImageList(true)
 }
 
 //加入图片
 function appendImage(imagePath) {
+
+    var imageListFirstItemId = null
+    var imageListLastItemId = null
+    for (imageListKey in imageList) {
+        theImageListItem = imageList[imageListKey]
+        if (theImageListItem.up == null) {
+            imageListFirstItemId = imageListKey
+        }
+        if (theImageListItem.next == null) {
+            imageListLastItemId = imageListKey
+        }
+    }
     console.log(imagePath)
     theId = createGuid()
+    // theId = imagePath
     theUpItemId = imageListLastItemId
     imageList[theId] = {
         "id": theId,
@@ -208,11 +255,93 @@ function appendImage(imagePath) {
     if (imageListLastItemId != null) {
         imageList[imageListLastItemId]["next"] = theId
     }
-    imageListLastItemId = theId
-
-    if (imageListFirstItemId == null) {
-        imageListFirstItemId = theId
-    }
 }
 
+//删除图片
+function toDel() {
+    if (theImage == null) {
+        return
+    }
+    var theImageId = $(theImage).attr('id') //当前项
+    if (theImageId == null) {
+        return
+    }
+    var theUpItemId = imageList[theImageId]['up']  //上一项   
+    var theNextItemId = imageList[theImageId]['next']  //下一项
+    if (theUpItemId != null) {
+        imageList[theUpItemId]['next'] = imageList[theImageId]['next']
+    }
+    //theImage 不是最后一项
+    if (theNextItemId != null) {
+        imageList[theNextItemId]['up'] = theUpItemId
+    }
+    delete imageList[theImageId]
+    hideImageTools()
+    showImageList(false)
+}
+
+//上移
+function toUp() {
+    if (theImage == null) {
+        return
+    }
+    var theImageId = $(theImage).attr('id') //当前项
+    var theUpItemId = imageList[theImageId]['up']  //上一项
+    var theUpUpItemId = null   //上上一项
+    if (theUpItemId != null) {
+        var theUpUpItemId = imageList[theUpItemId]['up']
+    }
+    var theNextItemId = imageList[theImageId]['next']  //下一项
+    //已经是第一项
+    if (theUpItemId == null) {
+        return
+    }
+    imageList[theImageId]['up'] = imageList[theUpItemId]['up']
+    imageList[theUpItemId]['up'] = theImageId
+    imageList[theUpItemId]['next'] = imageList[theImageId]['next']
+    imageList[theImageId]['next'] = theUpItemId
+    //theImage 不是最后一项
+    if (theNextItemId != null) {
+        imageList[theNextItemId]['up'] = theUpItemId
+    }
+    //上上项的next修改
+    if (theUpUpItemId != null) {
+        imageList[theUpUpItemId]['next'] = theImageId
+    }
+    hideImageTools()
+    showImageList(false)
+}
+
+
+//下移
+function toNext() {
+    if (theImage == null) {
+        return
+    }
+    var theImageId = $(theImage).attr('id') //当前项
+    var theNextItemId = imageList[theImageId]['next']  //下一项
+    var theNextNextItemId = null   //下下一项
+    if (theNextItemId != null) {
+        theNextNextItemId = imageList[theNextItemId]['next']
+    }
+    var theUpItemId = imageList[theImageId]['up']  //上一项
+    //已经是最后一项
+    if (theNextItemId == null) {
+        return
+    }
+    imageList[theImageId]['next'] = imageList[theNextItemId]['next']
+    imageList[theNextItemId]['next'] = theImageId
+    imageList[theNextItemId]['up'] = imageList[theImageId]['up']
+    imageList[theImageId]['up'] = theNextItemId
+    //theImage 不是第一项
+    if (theUpItemId != null) {
+        imageList[theUpItemId]['next'] = theNextItemId
+    }
+    //下下一项的up修改
+    if (theNextNextItemId != null) {
+        imageList[theNextNextItemId]['up'] = theImageId
+    }
+    hideImageTools()
+    showImageList(false)
+}
 
