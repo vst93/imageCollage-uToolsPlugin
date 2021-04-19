@@ -105,9 +105,25 @@ body{
     cursor: pointer;
     font-weight: 600;
     font-size: 20px;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 #image-tools p:hover{
     background-color: #b1b1b1;
     border-radius: 8px;
 }
+
+.to-up{
+    background-image: url(up.png);
+}
+
+.to-next{
+    background-image: url(next.png);
+}
+
+.to-del{
+    background-image: url(del.png);
+}
+
