@@ -5,6 +5,11 @@
 
 ![截屏2021-04-19 18.25.04.png](https://i.loli.net/2021/04/19/GKW8rBoaexOcIXQ.png)
 
+### 快捷键
+- `ctrl + a`  添加图片
+- `ctrl + d`  清空图片
+- `ctrl + s`  保存图片
+
 项目地址：[https://github.com/vst93/imageCollage-uToolsPlugin](https://github.com/vst93/imageCollage-uToolsPlugin)
 
 

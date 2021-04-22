@@ -14,7 +14,7 @@ utools.onPluginEnter(({ code, type, payload }) => {
             })
             callback(true);
         })(showImageList)
-    }else{
+    } else {
         showImageList()
     }
 });
@@ -39,6 +39,21 @@ $(function () {
     $(document).on('mouseover', '#image-tools p', function () {
         showImageTools()
     })
+
+    //快捷键
+    document.onkeydown = function (ev) {
+        var oEvent = ev || window.event;
+        if (oEvent.ctrlKey && oEvent.keyCode == 83) {
+            makeCollage()
+        }
+        if (oEvent.ctrlKey && oEvent.keyCode == 65) {
+            addImage()
+        }
+        if (oEvent.ctrlKey && oEvent.keyCode == 68) {
+            clearImageList()
+        }
+    }
+
 })
 
 function showImageTools() {
@@ -130,6 +145,7 @@ function makeCollage() {
     $("#loadingToast").show()
     if (Object.keys(imageList).length == 0) {
         showToast('warnToast', "未添加图片")
+        $("#loadingToast").hide()
         return
     }
     var imageListFirstItemId = null
@@ -196,8 +212,12 @@ function makeCollage() {
 
     imgDataUrl = c.toDataURL()
     // utools.copyImage(imgDataUrl)
-    imageFile = utools.getPath('downloads') + '/' + new Date().getTime() + '.png'
-    setTimeout(function(){     window.saveImage(imageFile, imgDataUrl) }, 0);
+    if (utools.isWindows()) {
+        imageFile = utools.getPath('downloads') + '\\' + new Date().getTime() + '.png'
+    } else {
+        imageFile = utools.getPath('downloads') + '/' + new Date().getTime() + '.png'
+    }
+    setTimeout(function () { window.saveImage(imageFile, imgDataUrl) }, 0);
 }
 
 
