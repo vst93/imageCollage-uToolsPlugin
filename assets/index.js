@@ -127,11 +127,11 @@ function clearImageList() {
 
 //合成图片
 function makeCollage() {
+    $("#loadingToast").show()
     if (Object.keys(imageList).length == 0) {
         showToast('warnToast', "未添加图片")
         return
     }
-
     var imageListFirstItemId = null
     for (imageListKey in imageList) {
         theImageListItem = imageList[imageListKey]
@@ -197,8 +197,7 @@ function makeCollage() {
     imgDataUrl = c.toDataURL()
     // utools.copyImage(imgDataUrl)
     imageFile = utools.getPath('downloads') + '/' + new Date().getTime() + '.png'
-    showToast("toast", "保存成功")
-    window.saveImage(imageFile, imgDataUrl)
+    setTimeout(function(){     window.saveImage(imageFile, imgDataUrl) }, 0);
 }
 
 
