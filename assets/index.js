@@ -1,6 +1,7 @@
 
 var imageList = {}
 var haveMargin = true
+var bgColor = true
 var theImage = null
 
 utools.onPluginEnter(({ code, type, payload }) => {
@@ -43,13 +44,14 @@ $(function () {
     //快捷键
     document.onkeydown = function (ev) {
         var oEvent = ev || window.event;
-        if (oEvent.ctrlKey && oEvent.keyCode == 83) {
+        var cmKey = oEvent.ctrlKey || oEvent.metaKey
+        if (cmKey && oEvent.keyCode == 83) {
             makeCollage()
         }
-        if (oEvent.ctrlKey && oEvent.keyCode == 65) {
+        if (cmKey && oEvent.keyCode == 65) {
             addImage()
         }
-        if (oEvent.ctrlKey && oEvent.keyCode == 68) {
+        if (cmKey && oEvent.keyCode == 68) {
             clearImageList()
         }
     }
@@ -119,6 +121,15 @@ function exchangeMargin() {
     $(".content .images img").last().css("margin-bottom", "0")
 }
 
+//切换背景颜色
+function exchangeBgColor() {
+    if (bgColor == true) {
+        $(".content .images").css('background', '#FFFFFF');
+    } else {
+        $(".content .images").css('background', '#000000');
+    }
+}
+
 //刷新开关对应的状态
 function refreshCheckBoxStatus(idName, theVal) {
     if (window[theVal] == true) {
@@ -133,6 +144,7 @@ function exchangeCheckBoxStatus(idName, theVal) {
     window[theVal] = !window[theVal]
     refreshCheckBoxStatus(idName, theVal)
 }
+
 
 //清空图片列表
 function clearImageList() {
@@ -185,7 +197,11 @@ function makeCollage() {
     document.getElementById("myCanvas").width = cw;
     document.getElementById("myCanvas").height = ch;
     var ctx = c.getContext("2d");
-    ctx.fillStyle = "#FFFFFF";
+    if(bgColor==false){
+        ctx.fillStyle = "#000000";
+    }else{
+        ctx.fillStyle = "#FFFFFF";
+    }
     ctx.fillRect(0, 0, cw, ch);
     var theY = 0
     var theX = 0
