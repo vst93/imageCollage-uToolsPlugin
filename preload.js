@@ -1,12 +1,18 @@
+const { throws } = require('assert');
 const fs = require('fs');
 const sizeOf = require('image-size');
 
 
 window.getImageWH = function (path) {
-    var dimensions = sizeOf(path);
-    return {
-        "h": dimensions.height,
-        "w": dimensions.width
+    try{
+        var dimensions = sizeOf(path);
+        return {
+            "h": dimensions.height,
+            "w": dimensions.width
+        }
+    }catch(err){
+        showToast("warnToast", "找不到所选图片，保存失败")
+        throw false
     }
 }
 

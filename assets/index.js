@@ -99,7 +99,7 @@ function showImageList(scrollTop) {
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
-        content += '<img src="' + theImageListItem.path + '" id="' + theImageListItem.id + '"></img>'
+        content += '<img src="' + theImageListItem.path + '?' + (new Date()).valueOf() + '" id="' + theImageListItem.id + '"></img>'
         theItemid = theImageListItem.next
     }
     $(".content .images").html(content)
@@ -145,7 +145,6 @@ function exchangeCheckBoxStatus(idName, theVal) {
     refreshCheckBoxStatus(idName, theVal)
 }
 
-
 //清空图片列表
 function clearImageList() {
     imageList = {}
@@ -176,8 +175,12 @@ function makeCollage() {
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
-        theImageWH = window.getImageWH(imageList[theItemid]["path"])
-        console.log('HHH', theImageWH)
+        try{
+            theImageWH = window.getImageWH(imageList[theItemid]["path"])
+        }catch(err){
+            $("#loadingToast").hide()
+            return
+        }
         if (cw == 0) {
             cw = theImageWH.w
             imageCommonW = theImageWH.w
@@ -197,9 +200,9 @@ function makeCollage() {
     document.getElementById("myCanvas").width = cw;
     document.getElementById("myCanvas").height = ch;
     var ctx = c.getContext("2d");
-    if(bgColor==false){
+    if (bgColor == false) {
         ctx.fillStyle = "#000000";
-    }else{
+    } else {
         ctx.fillStyle = "#FFFFFF";
     }
     ctx.fillRect(0, 0, cw, ch);
@@ -235,7 +238,6 @@ function makeCollage() {
     }
     setTimeout(function () { window.saveImage(imageFile, imgDataUrl) }, 0);
 }
-
 
 //显示提示框
 function showToast(idName, theText) {
@@ -346,7 +348,6 @@ function toUp() {
     hideImageTools()
     showImageList(false)
 }
-
 
 //下移
 function toNext() {
