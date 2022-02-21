@@ -3,6 +3,7 @@ var imageList = {}
 var haveMargin = true //是否有边框
 var bgColor = true  //边框颜色
 var theImage = null
+var orientation = null
 
 utools.onPluginEnter(({ code, type, payload }) => {
     if (type == "files") {
@@ -56,7 +57,18 @@ $(function () {
         }
     }
 
+    $(".images").each(function (index, element) {
+        element.onwheel = function (event) {
+            if (event.wheelDelta<0){
+                $('html').scrollLeft($('html').scrollLeft() + 100)
+            }else{
+                $('html').scrollLeft($('html').scrollLeft() - 100)
+            }
+        }
+    })
+
 })
+
 
 function showImageTools() {
     $(theImage).css('opacity', 0.6)
@@ -79,14 +91,19 @@ function createGuid() {
 }
 
 //渲染图片列表
-function showImageList(scrollTop) {
-    content = ""
-    console.log(imageList)
+function showImageList(scrollTopSta) {
+    var sl = $('html').scrollLeft()
+    // console.log(sl)
+
+    var content = ""
+    // console.log(imageList)
     if (Object.keys(imageList).length == 0) {
         $(".content .images").html('')
         $(".content .images").css('padding', '0');
         return
     }
+
+
     var imageListFirstItemId = null
     for (imageListKey in imageList) {
         theImageListItem = imageList[imageListKey]
@@ -102,11 +119,23 @@ function showImageList(scrollTop) {
         content += '<img src="' + theImageListItem.path + '?' + (new Date()).valueOf() + '" id="' + theImageListItem.id + '"></img>'
         theItemid = theImageListItem.next
     }
-    $(".content .images").html(content)
-    exchangeMargin()
-    if (scrollTop == true) {
-        $('.content .images').end().scrollTop($('.content .images').height())
-    }
+    (function (cb) {
+        $(".content .images").html(content)
+        exchangeMargin()
+        cb
+    })(function(){
+        // console.log($('.content .images').width())
+        // console.log(scrollTopSta)
+        $(function () {
+            if (scrollTopSta == true) {
+                $('html').scrollLeft($('.content .images').width())
+            } else {
+                $('html').scrollLeft(sl)
+            }
+        })
+    
+    }())
+    
 }
 
 //切换边框配置
@@ -128,6 +157,11 @@ function exchangeBgColor() {
     } else {
         $(".content .images").css('background', '#000000');
     }
+}
+
+//切换横竖排版
+function exchangeOrientation() {
+    window.location.href = 'index.html'
 }
 
 //刷新开关对应的状态
@@ -171,7 +205,7 @@ function makeCollage() {
     //计算所需canvas宽高
     var cw = 0;
     var ch = 0;
-    var imageCommonW = 0
+    var imageCommonH = 0
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
@@ -181,19 +215,19 @@ function makeCollage() {
             $("#loadingToast").hide()
             return
         }
-        if (cw == 0) {
-            cw = theImageWH.w
-            imageCommonW = theImageWH.w
+        if (ch == 0) {
+            ch = theImageWH.h
+            imageCommonH = theImageWH.h
         }
-        theH = theImageWH.h * cw / theImageWH.w
-        ch += theH
+        theW = theImageWH.w * ch / theImageWH.h
+        cw += theW
         theItemid = theImageListItem.next
     }
 
     //添加间隙
     if (haveMargin == true) {
-        cw += cw / 100 * 2
-        ch += cw / 100 * (Object.keys(imageList).length + 1)
+        ch += ch / 100 * 2
+        cw += ch / 100 * (Object.keys(imageList).length + 1)
     }
 
     var c = document.getElementById("myCanvas");
@@ -210,22 +244,22 @@ function makeCollage() {
     var theX = 0
 
     if (haveMargin == true) {
-        theX = imageCommonW / 100
+        theY = imageCommonH / 100
     }
 
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
         if (haveMargin == true) {
-            theY += imageCommonW / 100
+            theX += imageCommonH / 100
         }
         theImageWH = window.getImageWH(imageList[theItemid]["path"])
-        console.log('HHH22', theImageWH)
+        // console.log('HHH22', theImageWH)
         var img = document.getElementById(theItemid);
-        theH = theImageWH.h * imageCommonW / theImageWH.w
+        theW = theImageWH.w * imageCommonH / theImageWH.h
 
-        ctx.drawImage(img, theX, theY, imageCommonW, theH);
-        theY += theH
+        ctx.drawImage(img, theX, theY, theW, imageCommonH);
+        theX += theW
         theItemid = theImageListItem.next
     }
 
@@ -279,7 +313,7 @@ function appendImage(imagePath) {
             imageListLastItemId = imageListKey
         }
     }
-    console.log(imagePath)
+    // console.log(imagePath)
     theId = createGuid()
     // theId = imagePath
     theUpItemId = imageListLastItemId

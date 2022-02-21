@@ -3,6 +3,7 @@ var imageList = {}
 var haveMargin = true
 var bgColor = true
 var theImage = null
+var theOrientation = 1
 
 utools.onPluginEnter(({ code, type, payload }) => {
     if (type == "files") {
@@ -26,8 +27,8 @@ $(function () {
         thisTop = $(this).offset().top + $(this).height() / 2 - 20
         thisLeft = $(this).offset().left + 190
 
-        $('#image-tools').css('top', thisTop)
-        $('#image-tools').css('left', thisLeft)
+        $('.content #image-tools').css('top', thisTop)
+        $('.content #image-tools').css('left', thisLeft)
         theImage = this
         showImageTools()
     })
@@ -56,18 +57,47 @@ $(function () {
         }
     }
 
+
+    //横屏排版下
+    $(document).on('mouseenter', '.content2 >.images > img', function () {
+        thisTop = $(this).offset().top + $(this).height() / 2 - 20
+        thisLeft = $(this).offset().left + $(this).width() / 2 - 60
+
+        $('.content2 #image-tools').css('top', thisTop)
+        $('.content2 #image-tools').css('left', thisLeft)
+        theImage = this
+        showImageTools()
+    })
+    $(document).on('mouseleave', '.content2 >.images', function () {
+        hideImageTools()
+    })
+    $(".content2 .images").each(function (index, element) {
+        element.onwheel = function (event) {
+            if (event.wheelDelta < 0) {
+                $('html').scrollLeft($('html').scrollLeft() + 100)
+            } else {
+                $('html').scrollLeft($('html').scrollLeft() - 100)
+            }
+        }
+    })
+
 })
 
 function showImageTools() {
     $(theImage).css('opacity', 0.6)
     $(theImage).css('filter', 'dropshadow(color=#666666,offx=3,offy=3,positive=2)')
-    $('#image-tools').show()
+    $('.content #image-tools').show()
+    $('.content2 #image-tools').show()
 }
 
 function hideImageTools() {
     $('.content .images img').css('opacity', 1)
     $('.content .images img').css('filter', '')
-    $('#image-tools').hide()
+    $('.content #image-tools').hide()
+
+    $('.content2 .images img').css('opacity', 1)
+    $('.content2 .images img').css('filter', '')
+    $('.content2 #image-tools').hide()
 }
 
 //获取唯一id
@@ -80,8 +110,13 @@ function createGuid() {
 
 //渲染图片列表
 function showImageList(scrollTop) {
-    content = ""
-    console.log(imageList)
+    if(theOrientation==2){
+        showImageList2()
+        return
+    }
+    var st = $('.content .images').end().scrollTop()
+    var content = ""
+    // console.log(imageList)
     if (Object.keys(imageList).length == 0) {
         $(".content .images").html('')
         $(".content .images").css('padding', '0');
@@ -104,13 +139,22 @@ function showImageList(scrollTop) {
     }
     $(".content .images").html(content)
     exchangeMargin()
-    if (scrollTop == true) {
-        $('.content .images').end().scrollTop($('.content .images').height())
-    }
+    $(function () {
+        if (scrollTop == true) {
+            $('.content .images').end().scrollTop($('.content .images').height())
+        }else{
+            $('.content .images').end().scrollTop(st)
+        }
+    })
+    
 }
 
 //切换边框配置
 function exchangeMargin() {
+    if(theOrientation==2){
+        exchangeMargin2()
+        return
+    }
     if (haveMargin == true) {
         $(".content .images").css('padding', '5px');
         $(".content .images img").css('margin-bottom', '5px');
@@ -125,17 +169,44 @@ function exchangeMargin() {
 function exchangeBgColor() {
     if (bgColor == true) {
         $(".content .images").css('background', '#FFFFFF');
+        $(".content2 .images").css('background', '#FFFFFF');
     } else {
         $(".content .images").css('background', '#000000');
+        $(".content2 .images").css('background', '#000000');
     }
+}
+
+//切换横竖排版
+function exchangeOrientation(){
+    if (theOrientation==1){
+        theOrientation = 2
+        $('.content').hide()
+        $('.content2').show()
+        // refreshCheckBoxStatus('orientation', 'orientation')
+        // refreshCheckBoxStatus('haveMargin', 'haveMargin')
+        // refreshCheckBoxStatus('bgColor', 'bgColor')
+    }else{
+        theOrientation = 1
+        $('.content2').hide()
+        $('.content').show()
+        // refreshCheckBoxStatus('orientation', 'orientation')
+        // refreshCheckBoxStatus('haveMargin', 'haveMargin')
+        // refreshCheckBoxStatus('bgColor', 'bgColor')
+    }
+
+    showImageList()
 }
 
 //刷新开关对应的状态
 function refreshCheckBoxStatus(idName, theVal) {
+    console.log(theOrientation)
+    console.log(window[theVal])
     if (window[theVal] == true) {
-        $("#" + idName).attr("checked", true);
+        $(".content #" + idName).attr("checked", true);
+        $(".content2 #" + idName).attr("checked", true);
     } else {
-        $("#" + idName).attr("checked", false);
+        $(".content #" + idName).attr("checked", false);
+        $(".content2 #" + idName).attr("checked", false);
     }
 }
 
@@ -153,6 +224,10 @@ function clearImageList() {
 
 //合成图片
 function makeCollage() {
+    if (theOrientation==2){
+        makeCollage2()
+        return
+    }
     $("#loadingToast").show()
     if (Object.keys(imageList).length == 0) {
         showToast('warnToast', "未添加图片")
@@ -220,7 +295,7 @@ function makeCollage() {
             theY += imageCommonW / 100
         }
         theImageWH = window.getImageWH(imageList[theItemid]["path"])
-        console.log('HHH22', theImageWH)
+        // console.log('HHH22', theImageWH)
         var img = document.getElementById(theItemid);
         theH = theImageWH.h * imageCommonW / theImageWH.w
 
@@ -279,7 +354,7 @@ function appendImage(imagePath) {
             imageListLastItemId = imageListKey
         }
     }
-    console.log(imagePath)
+    // console.log(imagePath)
     theId = createGuid()
     // theId = imagePath
     theUpItemId = imageListLastItemId
@@ -381,3 +456,164 @@ function toNext() {
     showImageList(false)
 }
 
+
+
+
+//渲染图片列表
+function showImageList2(scrollTopSta) {
+    var sl = $('html').scrollLeft()
+    // console.log(sl)
+
+    var content = ""
+    // console.log(imageList)
+    if (Object.keys(imageList).length == 0) {
+        $(".content2 .images").html('')
+        $(".content2 .images").css('padding', '0');
+        return
+    }
+
+
+    var imageListFirstItemId = null
+    for (imageListKey in imageList) {
+        theImageListItem = imageList[imageListKey]
+        if (theImageListItem.up == null) {
+            imageListFirstItemId = imageListKey
+            break
+        }
+    }
+
+    var theItemid = imageListFirstItemId
+    while (theItemid != null && imageList[theItemid] != undefined) {
+        theImageListItem = imageList[theItemid]
+        content += '<img src="' + theImageListItem.path + '?' + (new Date()).valueOf() + '" id="' + theImageListItem.id + '"></img>'
+        theItemid = theImageListItem.next
+    }
+    (function (cb) {
+        $(".content2 .images").html(content)
+        exchangeMargin()
+        cb
+    })(function () {
+        // console.log($('.content2 .images').width())
+        // console.log(scrollTopSta)
+        $(function () {
+            if (scrollTopSta == true) {
+                $('html').scrollLeft($('.content2 .images').width())
+            } else {
+                $('html').scrollLeft(sl)
+            }
+        })
+
+    }())
+
+}
+
+
+//合成图片
+function makeCollage2() {
+    $("#loadingToast").show()
+    if (Object.keys(imageList).length == 0) {
+        showToast('warnToast', "未添加图片")
+        $("#loadingToast").hide()
+        return
+    }
+    var imageListFirstItemId = null
+    for (imageListKey in imageList) {
+        theImageListItem = imageList[imageListKey]
+        if (theImageListItem.up == null) {
+            imageListFirstItemId = imageListKey
+            break
+        }
+    }
+
+    //计算所需canvas宽高
+    var cw = 0;
+    var ch = 0;
+    var imageCommonH = 0
+    var theItemid = imageListFirstItemId
+    while (theItemid != null && imageList[theItemid] != undefined) {
+        theImageListItem = imageList[theItemid]
+        try {
+            theImageWH = window.getImageWH(imageList[theItemid]["path"])
+        } catch (err) {
+            $("#loadingToast").hide()
+            return
+        }
+        if (ch == 0) {
+            ch = theImageWH.h
+            imageCommonH = theImageWH.h
+        }
+        theW = theImageWH.w * ch / theImageWH.h
+        cw += theW
+        theItemid = theImageListItem.next
+    }
+
+    //添加间隙
+    if (haveMargin == true) {
+        ch += ch / 100 * 2
+        cw += ch / 100 * (Object.keys(imageList).length + 1)
+    }
+
+    var c = document.getElementById("myCanvas");
+    document.getElementById("myCanvas").width = cw;
+    document.getElementById("myCanvas").height = ch;
+    var ctx = c.getContext("2d");
+    if (bgColor == false) {
+        ctx.fillStyle = "#000000";
+    } else {
+        ctx.fillStyle = "#FFFFFF";
+    }
+    ctx.fillRect(0, 0, cw, ch);
+    var theY = 0
+    var theX = 0
+
+    if (haveMargin == true) {
+        theY = imageCommonH / 100
+    }
+
+    var theItemid = imageListFirstItemId
+    while (theItemid != null && imageList[theItemid] != undefined) {
+        theImageListItem = imageList[theItemid]
+        if (haveMargin == true) {
+            theX += imageCommonH / 100
+        }
+        theImageWH = window.getImageWH(imageList[theItemid]["path"])
+        // console.log('HHH22', theImageWH)
+        var img = document.getElementById(theItemid);
+        theW = theImageWH.w * imageCommonH / theImageWH.h
+
+        ctx.drawImage(img, theX, theY, theW, imageCommonH);
+        theX += theW
+        theItemid = theImageListItem.next
+    }
+
+    imgDataUrl = c.toDataURL()
+    // utools.copyImage(imgDataUrl)
+    if (utools.isWindows()) {
+        imageFile = utools.getPath('downloads') + '\\' + new Date().getTime() + '.png'
+    } else {
+        imageFile = utools.getPath('downloads') + '/' + new Date().getTime() + '.png'
+    }
+    setTimeout(function () { window.saveImage(imageFile, imgDataUrl) }, 0);
+}
+
+
+function exchangeMargin2() {
+    if (haveMargin == true) {
+        $(".content2 .images").css('padding', '5px');
+        $(".content2 .images img").css('margin-right', '5px');
+    } else {
+        $(".content2 .images").css('padding', '0');
+        $(".content2 .images img").css('margin-right', '0');
+    }
+    $(".content2 .images img").last().css("margin-right", "0")
+}
+
+
+//刷新开关对应的状态
+function refreshCheckBoxStatus2(idName, theVal) {
+    if (window[theVal] == true) {
+        $(".content2 #" + idName).attr("checked", true);
+    } else {
+        $(".content2 #" + idName).attr("checked", false);
+    }
+}

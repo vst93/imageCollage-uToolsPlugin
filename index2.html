@@ -12,7 +12,7 @@
 </head>
 
 <body data-weui-theme="light">
-    <div class="content">
+    <div class="content2">
         <div class="images">
             <img />
         </div>
@@ -20,7 +20,7 @@
             <!-- <form> -->
             <div class="weui-cells weui-cells_form tools-div">
                 <div class="weui-cell weui-cell_active weui-cell_switch">
-                    <div class="weui-cell__bd">横竖方向</div>
+                    <div class="weui-cell__bd">横竖排版</div>
                     <div class="weui-cell__ft">
                         <input class="weui-switch cursor-pointer" id="orientation" type="checkbox" checked="checked"
                             onclick="exchangeCheckBoxStatus('orientation','orientation');exchangeOrientation();">
@@ -48,6 +48,11 @@
             </div>
             <!-- </form> -->
         </div>
+        <div id="image-tools" style="display: none;">
+            <p class='to-up' onclick="toUp()"></p>
+            <p class='to-next' onclick="toNext()"></p>
+            <p class='to-del' onclick="toDel()"></p>
+        </div>
     </div>
     <canvas id="myCanvas">
         do not support canvas
@@ -70,7 +75,7 @@
         <div class="weui-mask_transparent"></div>
         <div class="weui-toast">
             <span class="weui-primary-loading weui-icon_toast">
-              <span class="weui-primary-loading__dot"></span>
+                <span class="weui-primary-loading__dot"></span>
             </span>
             <p class="weui-toast__content">加载中</p>
         </div>
@@ -78,8 +83,9 @@
     <div id="image-tools" style="display: none;">
         <p class='to-up' onclick="toUp()"></p>
         <p class='to-next' onclick="toNext()"></p>
-        <p class='to-del'  onclick="toDel()"></p>
+        <p class='to-del' onclick="toDel()"></p>
     </div>
     <script src="assets/index2.js"></script>
 </body>
+
 </html>
