@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf8" />
+    <link rel="stylesheet" type="text/css" href="assets/index2.css" />
+    <link rel="stylesheet" type="text/css" href="assets/weui.min.css" />
+    <script src="assets/jquery-3.3.1.min.js"></script>
+    <script src="assets/weui.min.js"></script>
+    <script>
+    </script>
+</head>
+
+<body data-weui-theme="light">
+    <div class="content">
+        <div class="images">
+            <img />
+        </div>
+        <div class="tools">
+            <!-- <form> -->
+            <div class="weui-cells weui-cells_form tools-div">
+                <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell__bd">横竖方向</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch cursor-pointer" id="orientation" type="checkbox" checked="checked"
+                            onclick="exchangeCheckBoxStatus('orientation','orientation');exchangeOrientation();">
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell__bd">添加间隙</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch cursor-pointer" id="haveMargin" type="checkbox" checked="checked"
+                            onclick="exchangeCheckBoxStatus('haveMargin','haveMargin');exchangeMargin();">
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell__bd">黑白背景</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch cursor-pointer" id="bgColor" type="checkbox" checked="checked"
+                            onclick="exchangeCheckBoxStatus('bgColor','bgColor');exchangeBgColor();">
+                    </div>
+                </div>
+            </div>
+            <div class="button-sp-area tools-div">
+                <a href="javascript:" onclick="addImage()" class="weui-btn weui-btn_primary">添加图片</a>
+                <a href="javascript:" onclick="clearImageList()" class="weui-btn weui-btn_warn">清空图片</a>
+                <a href="javascript:" onclick="makeCollage()" class="weui-btn weui-btn_primary">保存图片</a>
+            </div>
+            <!-- </form> -->
+        </div>
+    </div>
+    <canvas id="myCanvas">
+        do not support canvas
+    </canvas>
+    <div id="warnToast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-warn weui-icon_toast"></i>
+            <p class="weui-toast__content"></p>
+        </div>
+    </div>
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p class="weui-toast__content"></p>
+        </div>
+    </div>
+    <div id="loadingToast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <span class="weui-primary-loading weui-icon_toast">
+              <span class="weui-primary-loading__dot"></span>
+            </span>
+            <p class="weui-toast__content">加载中</p>
+        </div>
+    </div>
+    <div id="image-tools" style="display: none;">
+        <p class='to-up' onclick="toUp()"></p>
+        <p class='to-next' onclick="toNext()"></p>
+        <p class='to-del'  onclick="toDel()"></p>
+    </div>
+    <script src="assets/index2.js"></script>
+</body>
+</html>
