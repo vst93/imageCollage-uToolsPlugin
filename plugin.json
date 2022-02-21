@@ -3,9 +3,9 @@
 	"description": "图片拼接",
 	"homepage": "https://github.com/vst93/imageCollage-uToolsPlugin",
 	"author": "vst",
-	"main": "index2.html",
+	"main": "index.html",
 	"logo": "logo.png",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"preload":"preload.js",
 	"features": [
 	    {

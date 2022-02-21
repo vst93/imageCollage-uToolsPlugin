@@ -1,20 +1,8 @@
-body{
-    margin: 0;
-    /* width: 100%; */
-    background: #EBECED;
-    -webkit-touch-callout: none;
-    -moz-user-select: none; /*火狐*/
-    -webkit-user-select: none;  /*webkit浏览器*/
-    -ms-user-select: none;   /*IE10*/
-    -khtml-user-select: none; /*早期浏览器*/
-    user-select: none;
-}
-
-.content{
+.content2{
     padding: 0;
     margin: 0 auto;
 }
-.content .images{
+.content2 .images{
     background: #ffffff;
     margin: 10px;
     padding: 5px;
@@ -23,14 +11,14 @@ body{
     white-space: nowrap;
 }
 
-.content .images img{
+.content2 .images img{
     padding: 0;
     margin: 0;
     height: 55vh;
     display: block;
 }
 
-.tools{
+.content2 .tools{
     /* width: 220px; */
     background: #fff;
     margin: 10px;
@@ -41,79 +29,22 @@ body{
     float: right;
 }
 
-.tools-div{
+.content2 .tools-div{
     width: 220PX;
     display: block;
     float: left;
 }
 
-.v-margin-center{
-    margin:0 auto;
+.content2 .to-up{
+    background-image: url(left.png);
 }
 
-.v-dividing-line{
-    display: block;
-    height: 0;
-    color: #fff;
-    border-bottom: 1px solid #b1b1b1;
-    margin: 8px 0;
-    width: 100%;
-    padding: 0;
-    margin-top: 18px;
-}
-
-#myCanvas{
-    display: none;
-}
-.cursor-pointer{
-    cursor: pointer;
-}
-
-#image-tools{
-    width: 120px;
-    height: 40px;
-    position: absolute;
-    background: #000000a3;
-    left: 0;
-    top: 0;
-    color: #FFF;
-    border-radius: 8px;
-}
-
-#image-tools p{
-    display: block;
-    float: left;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    line-height: 40px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 20px;
-    background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-#image-tools p:hover{
-    background-color: #b1b1b1;
-    border-radius: 8px;
-}
-
-.to-up{
-    background-image: url(up.png);
-}
-
-.to-next{
-    background-image: url(next.png);
-}
-
-.to-del{
-    background-image: url(del.png);
+.content2 .to-next{
+    background-image: url(right.png);
 }
 
 
-.weui-cell_switch {
+.content2 .weui-cell_switch {
     padding-top: 8px !important;
     padding-bottom: 8px !important;
 }

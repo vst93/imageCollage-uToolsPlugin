@@ -1,7 +1,6 @@
-const { throws } = require('assert');
+// const { throws } = require('assert');
 const fs = require('fs');
 const sizeOf = require('image-size');
-
 
 window.getImageWH = function (path) {
     try{
