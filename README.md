@@ -2,8 +2,8 @@
 
 如名，简单的图片垂直拼接，保存的图片在系统下载目录。
 
-![UTOOLS_1619171271226.png](https://i.loli.net/2021/04/23/UaqvQuY4LeW5trd.png)
-
+[![bSpPl8.md.png](https://s4.ax1x.com/2022/02/22/bSpPl8.md.png)](https://imgtu.com/i/bSpPl8)
+[![bSpCSf.md.png](https://s4.ax1x.com/2022/02/22/bSpCSf.md.png)](https://imgtu.com/i/bSpCSf)
 ##### 快捷键
 - `ctrl + a` `cmd + a` 添加图片
 - `ctrl + d` `cmd + d` 清空图片
@@ -26,3 +26,6 @@
 
 `v0.04 - 20210620`
 - 处理图片缓存导致的bug
+
+`v0.05 - 20220222`
+- 增加横向拼接
