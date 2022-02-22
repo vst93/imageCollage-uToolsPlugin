@@ -71,12 +71,19 @@ $(function () {
     $(document).on('mouseleave', '.content2 >.images', function () {
         hideImageTools()
     })
+    
     $(".content2 .images").each(function (index, element) {
         element.onwheel = function (event) {
-            if (event.wheelDelta < 0) {
-                $('html').scrollLeft($('html').scrollLeft() + 100)
-            } else {
-                $('html').scrollLeft($('html').scrollLeft() - 100)
+            if (event.wheelDeltaX != 0){  
+                //触摸板操作
+                return
+            }else {
+                //滚轮操作
+                if (event.wheelDelta < 0) {
+                    $('html').scrollLeft($('html').scrollLeft() + 100)
+                } else {
+                    $('html').scrollLeft($('html').scrollLeft() - 100)
+                }
             }
         }
     })
@@ -110,7 +117,7 @@ function createGuid() {
 
 //渲染图片列表
 function showImageList(scrollTop) {
-    if(theOrientation==2){
+    if (theOrientation == 2) {
         showImageList2()
         return
     }
@@ -142,16 +149,16 @@ function showImageList(scrollTop) {
     $(function () {
         if (scrollTop == true) {
             $('.content .images').end().scrollTop($('.content .images').height())
-        }else{
+        } else {
             $('.content .images').end().scrollTop(st)
         }
     })
-    
+
 }
 
 //切换边框配置
 function exchangeMargin() {
-    if(theOrientation==2){
+    if (theOrientation == 2) {
         exchangeMargin2()
         return
     }
@@ -177,21 +184,15 @@ function exchangeBgColor() {
 }
 
 //切换横竖排版
-function exchangeOrientation(){
-    if (theOrientation==1){
+function exchangeOrientation() {
+    if (theOrientation == 1) {
         theOrientation = 2
         $('.content').hide()
         $('.content2').show()
-        // refreshCheckBoxStatus('orientation', 'orientation')
-        // refreshCheckBoxStatus('haveMargin', 'haveMargin')
-        // refreshCheckBoxStatus('bgColor', 'bgColor')
-    }else{
+    } else {
         theOrientation = 1
         $('.content2').hide()
         $('.content').show()
-        // refreshCheckBoxStatus('orientation', 'orientation')
-        // refreshCheckBoxStatus('haveMargin', 'haveMargin')
-        // refreshCheckBoxStatus('bgColor', 'bgColor')
     }
 
     showImageList()
@@ -199,14 +200,14 @@ function exchangeOrientation(){
 
 //刷新开关对应的状态
 function refreshCheckBoxStatus(idName, theVal) {
-    console.log(theOrientation)
-    console.log(window[theVal])
+    // console.log(theOrientation)
+    // console.log(window[theVal])
     if (window[theVal] == true) {
-        $(".content #" + idName).attr("checked", true);
-        $(".content2 #" + idName).attr("checked", true);
+        $("#" + idName).prop("checked", true);
+        $("#" + idName + "2").prop("checked", true);
     } else {
-        $(".content #" + idName).attr("checked", false);
-        $(".content2 #" + idName).attr("checked", false);
+        $("#" + idName).prop("checked", false);
+        $("#" + idName + "2").prop("checked", false);
     }
 }
 
@@ -224,7 +225,7 @@ function clearImageList() {
 
 //合成图片
 function makeCollage() {
-    if (theOrientation==2){
+    if (theOrientation == 2) {
         makeCollage2()
         return
     }
@@ -250,9 +251,9 @@ function makeCollage() {
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
-        try{
+        try {
             theImageWH = window.getImageWH(imageList[theItemid]["path"])
-        }catch(err){
+        } catch (err) {
             $("#loadingToast").hide()
             return
         }
@@ -608,12 +609,3 @@ function exchangeMargin2() {
     $(".content2 .images img").last().css("margin-right", "0")
 }
 
-
-//刷新开关对应的状态
-function refreshCheckBoxStatus2(idName, theVal) {
-    if (window[theVal] == true) {
-        $(".content2 #" + idName).attr("checked", true);
-    } else {
-        $(".content2 #" + idName).attr("checked", false);
-    }
-}
