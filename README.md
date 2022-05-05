@@ -1,6 +1,6 @@
 # imageCollage-uToolsPlugin 图片拼接插件
 
-如名，简单的图片垂直拼接，保存的图片在系统下载目录。
+如名，图片拼接，保存的图片在系统下载目录。
 
 [![bSpPl8.md.png](https://s4.ax1x.com/2022/02/22/bSpPl8.md.png)](https://imgtu.com/i/bSpPl8)
 [![bSpCSf.md.png](https://s4.ax1x.com/2022/02/22/bSpCSf.md.png)](https://imgtu.com/i/bSpCSf)
@@ -29,3 +29,10 @@
 
 `v0.05 - 20220222`
 - 增加横向拼接
+
+`v0.06 - 20220504`
+- 增加拖入图片操作
+- 增加背景颜色自定义
+- 增加合成图片宽高自定义
+- 优化逻辑
+- logo调整
