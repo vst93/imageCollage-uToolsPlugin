@@ -1,7 +1,6 @@
 
 var imageList = {}
 var haveMargin = true
-var bgColor = true
 var theImage = null
 var theOrientation = 1
 
@@ -23,23 +22,22 @@ utools.onPluginEnter(({ code, type, payload }) => {
 
 
 $(function () {
-    $(document).on('mouseenter', '.content >.images > img', function () {
-        thisTop = $(this).offset().top + $(this).height() / 2 - 20
-        thisLeft = $(this).offset().left + 190
-
+    $(document).on('mouseover', '.content >.images > img', function () {
+        thisTop = $(this).offset().top
+        thisLeft = $(this).offset().left
+        thisPT = ($(this).height() - 40) / 2
+        thisPL = ($(this).width() - 120) / 2
         $('.content #image-tools').css('top', thisTop)
         $('.content #image-tools').css('left', thisLeft)
+        $('.content #image-tools').css('padding-top', thisPT)
+        $('.content #image-tools').css('padding-bottom', thisPT)
+        $('.content #image-tools').css('padding-left', thisPL)
+        $('.content #image-tools').css('padding-right', thisPL)
         theImage = this
         showImageTools()
     })
-    $(document).on('mouseleave', '.content >.images', function () {
+    $(document).on('mouseleave', '#image-tools', function () {
         hideImageTools()
-    })
-    $(document).on('mouseover', '#image-tools', function () {
-        showImageTools()
-    })
-    $(document).on('mouseover', '#image-tools p', function () {
-        showImageTools()
     })
 
     //快捷键
@@ -59,25 +57,31 @@ $(function () {
 
 
     //横屏排版下
-    $(document).on('mouseenter', '.content2 >.images > img', function () {
-        thisTop = $(this).offset().top + $(this).height() / 2 - 20
-        thisLeft = $(this).offset().left + $(this).width() / 2 - 60
-
+    $(document).on('mouseover', '.content2 >.images > img', function () {
+        thisTop = $(this).offset().top
+        thisLeft = $(this).offset().left
+        thisPT = ($(this).height() - 40) / 2
+        thisPL = ($(this).width() - 120) / 2
         $('.content2 #image-tools').css('top', thisTop)
         $('.content2 #image-tools').css('left', thisLeft)
+        $('.content2 #image-tools').css('padding-top', thisPT)
+        $('.content2 #image-tools').css('padding-bottom', thisPT)
+        $('.content2 #image-tools').css('padding-left', thisPL)
+        $('.content2 #image-tools').css('padding-right', thisPL)
+
         theImage = this
         showImageTools()
     })
-    $(document).on('mouseleave', '.content2 >.images', function () {
+    $(document).on('mouseleave', '#image-tools', function () {
         hideImageTools()
     })
-    
-    $(".content2 .images").each(function (index, element) {
+
+    $(".content2").each(function (index, element) {
         element.onwheel = function (event) {
-            if (event.wheelDeltaX != 0){  
+            if (event.wheelDeltaX != 0) {
                 //触摸板操作
                 return
-            }else {
+            } else {
                 //滚轮操作
                 if (event.wheelDelta < 0) {
                     $('html').scrollLeft($('html').scrollLeft() + 100)
@@ -88,22 +92,70 @@ $(function () {
         }
     })
 
+    const dropwrapper = document;
+    dropwrapper.addEventListener('drop', (e) => {
+        e.preventDefault()
+        const files = e.dataTransfer.files;
+
+        if (files && files.length > 0) {
+            //获取文件路径
+            for (fileKey in files) {
+                console.log(files[fileKey])
+                if (files[fileKey].type != "image/jpeg" && files[fileKey].type != "image/jpeg"
+                    && files[fileKey].type != "image/gif" && files[fileKey].type != "image/png"
+                    && files[fileKey].type != "image/svg+xml" && files[fileKey].type != "application/x-bmp"
+                    && files[fileKey].type != "image/webp"
+                ) {
+                    continue
+                }
+                const theImgPath = files[fileKey].path;
+                if (theImgPath != undefined && theImgPath.length > 0) {
+                    // console.log('path:', theImgPath);
+                    appendImage(theImgPath)
+                }
+            }
+            showImageList(true)
+        }
+    })
+    dropwrapper.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    })
+
+
+    $('.picker').colpick({
+        layout: 'hex',
+        submit: 0,
+        colorScheme: 'dark',
+        onChange: function (hsb, hex, rgb, el, bySetColor) {
+            // $(el).css('border-color', '#' + hex);
+            $('.picker').css('border-color', '#' + hex);
+            // Fill the text box just if the color was set using the picker, and not the colpickSetColor function.
+            if (!bySetColor) {
+                // $(el).val(hex);
+                $('.picker').val(hex);
+            }
+            exchangeBgColor()
+        }
+    }).keyup(function () {
+        // $(this).colpickSetColor(this.value);
+        $('.picker').colpickSetColor(this.value);
+    });
 })
 
 function showImageTools() {
-    $(theImage).css('opacity', 0.6)
-    $(theImage).css('filter', 'dropshadow(color=#666666,offx=3,offy=3,positive=2)')
+    // $(theImage).css('opacity', 0.6)
+    // $(theImage).css('filter', 'dropshadow(color=#666666,offx=3,offy=3,positive=2)')
     $('.content #image-tools').show()
     $('.content2 #image-tools').show()
 }
 
 function hideImageTools() {
-    $('.content .images img').css('opacity', 1)
-    $('.content .images img').css('filter', '')
+    // $('.content .images img').css('opacity', 1)
+    // $('.content .images img').css('filter', '')
     $('.content #image-tools').hide()
 
-    $('.content2 .images img').css('opacity', 1)
-    $('.content2 .images img').css('filter', '')
+    // $('.content2 .images img').css('opacity', 1)
+    // $('.content2 .images img').css('filter', '')
     $('.content2 #image-tools').hide()
 }
 
@@ -117,8 +169,10 @@ function createGuid() {
 
 //渲染图片列表
 function showImageList(scrollTop) {
+
+    outputWidth()
     if (theOrientation == 2) {
-        showImageList2()
+        showImageList2(scrollTop)
         return
     }
     var st = $('.content .images').end().scrollTop()
@@ -174,13 +228,12 @@ function exchangeMargin() {
 
 //切换背景颜色
 function exchangeBgColor() {
-    if (bgColor == true) {
-        $(".content .images").css('background', '#FFFFFF');
-        $(".content2 .images").css('background', '#FFFFFF');
-    } else {
-        $(".content .images").css('background', '#000000');
-        $(".content2 .images").css('background', '#000000');
+    var theColor = "#FFFFFF"
+    if ($('.picker').val().length > 0){
+        theColor = "#" + $('.picker').val()
     }
+    $(".content .images").css('background', theColor);
+    $(".content2 .images").css('background', theColor);
 }
 
 //切换横竖排版
@@ -248,6 +301,13 @@ function makeCollage() {
     var cw = 0;
     var ch = 0;
     var imageCommonW = 0
+
+    if ($("#outputWidth").val()>0){
+        imageCommonW = Number($("#outputWidth").val())
+        cw = imageCommonW
+    }
+
+
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
@@ -276,11 +336,14 @@ function makeCollage() {
     document.getElementById("myCanvas").width = cw;
     document.getElementById("myCanvas").height = ch;
     var ctx = c.getContext("2d");
-    if (bgColor == false) {
-        ctx.fillStyle = "#000000";
-    } else {
-        ctx.fillStyle = "#FFFFFF";
+
+    //背景色
+    var theColor = "#FFFFFF"
+    if ($('.picker').val().length > 0) {
+        theColor = "#" + $('.picker').val()
     }
+    ctx.fillStyle = theColor
+
     ctx.fillRect(0, 0, cw, ch);
     var theY = 0
     var theX = 0
@@ -509,7 +572,7 @@ function showImageList2(scrollTopSta) {
 }
 
 
-//合成图片
+//合成图片-横屏
 function makeCollage2() {
     $("#loadingToast").show()
     if (Object.keys(imageList).length == 0) {
@@ -530,6 +593,12 @@ function makeCollage2() {
     var cw = 0;
     var ch = 0;
     var imageCommonH = 0
+
+    if ($("#outputHight").val() > 0) {
+        imageCommonH = Number($("#outputHight").val())
+        ch = imageCommonH
+    }
+
     var theItemid = imageListFirstItemId
     while (theItemid != null && imageList[theItemid] != undefined) {
         theImageListItem = imageList[theItemid]
@@ -558,11 +627,15 @@ function makeCollage2() {
     document.getElementById("myCanvas").width = cw;
     document.getElementById("myCanvas").height = ch;
     var ctx = c.getContext("2d");
-    if (bgColor == false) {
-        ctx.fillStyle = "#000000";
-    } else {
-        ctx.fillStyle = "#FFFFFF";
+
+
+    //背景色
+    var theColor = "#FFFFFF"
+    if ($('.picker').val().length > 0) {
+        theColor = "#" + $('.picker').val()
     }
+    ctx.fillStyle = theColor
+
     ctx.fillRect(0, 0, cw, ch);
     var theY = 0
     var theX = 0
@@ -598,6 +671,7 @@ function makeCollage2() {
 }
 
 
+//切换边框
 function exchangeMargin2() {
     if (haveMargin == true) {
         $(".content2 .images").css('padding', '5px');
@@ -609,3 +683,24 @@ function exchangeMargin2() {
     $(".content2 .images img").last().css("margin-right", "0")
 }
 
+
+//计算首图宽度
+function outputWidth() {
+    var imageListFirstItemId = null
+    for (imageListKey in imageList) {
+        theImageListItem = imageList[imageListKey]
+        if (theImageListItem.up == null) {
+            imageListFirstItemId = imageListKey
+            break
+        }
+    }
+    var theW = ''
+    var theH = ''
+    if (imageListFirstItemId != null) {
+        var theImageWH = window.getImageWH(imageList[imageListFirstItemId]["path"])
+        theW = theImageWH.w
+        theH = theImageWH.h
+    }
+    $("#outputWidth").val(theW)
+    $("#outputHight").val(theH)
+}

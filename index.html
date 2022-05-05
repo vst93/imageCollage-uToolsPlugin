@@ -6,8 +6,10 @@
     <link rel="stylesheet" type="text/css" href="assets/index.css" />
     <link rel="stylesheet" type="text/css" href="assets/index2.css" />
     <link rel="stylesheet" type="text/css" href="assets/weui.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/colpick/colpick.css" />
     <script src="assets/jquery-3.3.1.min.js"></script>
     <script src="assets/weui.min.js"></script>
+    <script src="assets/colpick/colpick.js"></script>
     <script>
     </script>
 </head>
@@ -17,7 +19,7 @@
         <div class="images">
             <img />
         </div>
-        <div class="tools">
+        <div class="tools" id="droptest">
             <!-- <form> -->
             <div class="weui-cells weui-cells_form">
                 <div class="weui-cell weui-cell_active weui-cell_switch">
@@ -35,10 +37,16 @@
                     </div>
                 </div>
                 <div class="weui-cell weui-cell_active weui-cell_switch">
-                    <div class="weui-cell__bd">黑白背景</div>
+                    <div class="weui-cell__bd">背景颜色</div>#
                     <div class="weui-cell__ft">
-                        <input class="weui-switch cursor-pointer" id="bgColor" type="checkbox" checked="checked"
-                            onclick="exchangeCheckBoxStatus('bgColor','bgColor');exchangeBgColor();" />
+                        <input type="text" class="picker" value="000000"></input>
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell__bd">输出图宽</div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" id="outputWidth" style="text-align:right;height: 32px;" type="number"
+                            placeholder="单位 px" oninput="if(value.length>5)value=value.slice(0,5)" />
                     </div>
                 </div>
             </div>
@@ -50,9 +58,11 @@
             <!-- </form> -->
         </div>
         <div id="image-tools" style="display: none;">
-            <p class='to-up' onclick="toUp()"></p>
-            <p class='to-next' onclick="toNext()"></p>
-            <p class='to-del' onclick="toDel()"></p>
+            <div class="image-tools-box">
+                <p class='to-up' onclick="toUp()"></p>
+                <p class='to-next' onclick="toNext()"></p>
+                <p class='to-del' onclick="toDel()"></p>
+            </div>
         </div>
     </div>
     <div class="content2" style="display: none;">
@@ -77,10 +87,16 @@
                     </div>
                 </div>
                 <div class="weui-cell weui-cell_active weui-cell_switch">
-                    <div class="weui-cell__bd">黑白背景</div>
+                    <div class="weui-cell__bd">背景颜色</div>#
                     <div class="weui-cell__ft">
-                        <input class="weui-switch cursor-pointer" id="bgColor2" type="checkbox" checked="checked"
-                            onclick="exchangeCheckBoxStatus('bgColor','bgColor');exchangeBgColor();" />
+                        <input type="text" class="picker" value="000000"></input>
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell__bd">输出图高</div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" id="outputHight" style="text-align:right;height: 32px;" type="number"
+                            placeholder="单位 px" oninput="if(value.length>5)value=value.slice(0,5)" />
                     </div>
                 </div>
             </div>
@@ -92,9 +108,11 @@
             <!-- </form> -->
         </div>
         <div id="image-tools" style="display: none;">
-            <p class='to-up' onclick="toUp()"></p>
-            <p class='to-next' onclick="toNext()"></p>
-            <p class='to-del' onclick="toDel()"></p>
+            <div class="image-tools-box">
+                <p class='to-up' onclick="toUp()"></p>
+                <p class='to-next' onclick="toNext()"></p>
+                <p class='to-del' onclick="toDel()"></p>
+            </div>
         </div>
     </div>
     <canvas id="myCanvas">
