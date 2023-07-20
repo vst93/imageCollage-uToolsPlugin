@@ -1,6 +1,7 @@
 
 var imageList = {}
 var haveMargin = true
+var bgLucency = false
 var theImage = null
 var theOrientation = 1
 
@@ -229,11 +230,20 @@ function exchangeMargin() {
 //切换背景颜色
 function exchangeBgColor() {
     var theColor = "#FFFFFF"
-    if ($('.picker').val().length > 0){
+    if (bgLucency){
+        theColor = "rgba(0, 0, 0, 0)"
+    } else if ($('.picker').val().length > 0){
         theColor = "#" + $('.picker').val()
     }
     $(".content .images").css('background', theColor);
     $(".content2 .images").css('background', theColor);
+ 
+    if(bgLucency){
+        $(".picker_bg").hide();
+    }else{
+        $(".picker_bg").show();
+    }
+
 }
 
 //切换横竖排版
@@ -338,11 +348,16 @@ function makeCollage() {
     var ctx = c.getContext("2d");
 
     //背景色
-    var theColor = "#FFFFFF"
-    if ($('.picker').val().length > 0) {
-        theColor = "#" + $('.picker').val()
+    if (!bgLucency){
+        var theColor = "#FFFFFF"
+        if ($('.picker').val().length > 0) {
+            theColor = "#" + $('.picker').val()
+        }
+        ctx.fillStyle = theColor
+    }else{
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
     }
-    ctx.fillStyle = theColor
+    
 
     ctx.fillRect(0, 0, cw, ch);
     var theY = 0
@@ -630,11 +645,15 @@ function makeCollage2() {
 
 
     //背景色
-    var theColor = "#FFFFFF"
-    if ($('.picker').val().length > 0) {
-        theColor = "#" + $('.picker').val()
+    if (!bgLucency) {
+        var theColor = "#FFFFFF"
+        if ($('.picker').val().length > 0) {
+            theColor = "#" + $('.picker').val()
+        }
+        ctx.fillStyle = theColor
+    }else{
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
     }
-    ctx.fillStyle = theColor
 
     ctx.fillRect(0, 0, cw, ch);
     var theY = 0

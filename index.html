@@ -10,6 +10,8 @@
     <script src="assets/jquery-3.3.1.min.js"></script>
     <script src="assets/weui.min.js"></script>
     <script src="assets/colpick/colpick.js"></script>
+    <script async src="./assets/analytics.umami.is_script.js"
+        data-website-id="32c24ade-d689-4252-a37a-52c61aa04e5a"></script>
     <script>
     </script>
 </head>
@@ -36,7 +38,14 @@
                             onclick="exchangeCheckBoxStatus('haveMargin','haveMargin');exchangeMargin();" />
                     </div>
                 </div>
-                <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell weui-cell_active weui-cell_switch">
+                        <div class="weui-cell__bd">透明背景</div>
+                        <div class="weui-cell__ft">
+                            <input class="weui-switch cursor-pointer" id="bgLucency" type="checkbox"
+                                onclick="exchangeCheckBoxStatus('bgLucency','bgLucency');exchangeBgColor();" />
+                        </div>
+                    </div>
+                <div class="weui-cell weui-cell_active weui-cell_switch picker_bg">
                     <div class="weui-cell__bd">背景颜色</div>#
                     <div class="weui-cell__ft">
                         <input type="text" class="picker" value="ffffff"></input>
@@ -86,7 +95,16 @@
                             onclick="exchangeCheckBoxStatus('haveMargin','haveMargin');exchangeMargin();" />
                     </div>
                 </div>
+            </div>
+            <div class="weui-cells weui-cells_form tools-div">
                 <div class="weui-cell weui-cell_active weui-cell_switch">
+                    <div class="weui-cell__bd">透明背景</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch cursor-pointer" id="bgLucency2" type="checkbox"
+                            onclick="exchangeCheckBoxStatus('bgLucency','bgLucency');exchangeBgColor();" />
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_active weui-cell_switch picker_bg">
                     <div class="weui-cell__bd">背景颜色</div>#
                     <div class="weui-cell__ft">
                         <input type="text" class="picker" value="ffffff"></input>
